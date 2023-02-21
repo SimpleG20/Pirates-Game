@@ -16,6 +16,7 @@ public abstract class Enemy : MonoBehaviour
     [Header("UI Components")]
     [SerializeField] protected Image HealthUI;
     [SerializeField] protected Gradient HealthGradient;
+    [SerializeField] protected FollowBoat UiHealthFollowing;
 
     [Header("Boat")]
     [SerializeField] protected Boat Boat = new Boat();
@@ -35,8 +36,9 @@ public abstract class Enemy : MonoBehaviour
     {
         TokenSource = new CancellationTokenSource();
 
-        _health = 100;
-        HealthUISituation();
+        UiHealthFollowing.Initiate(transform);
+
+        ChangeHealthValue(100);
     }
     
     public abstract void Move();
@@ -49,21 +51,27 @@ public abstract class Enemy : MonoBehaviour
     {
         if (_health < 0) return;
 
-        _health -= (int)(15 * factor);
-        print(_health);
-
-        HealthUISituation();
+        ChangeHealthValue(-(int)(15 * factor));
 
         if (_health > 0) Damage(hitPosition);
         else Die();
+    }
+
+    private void ChangeHealthValue(int valueToAdd)
+    {
+        _health += valueToAdd;
+        HealthUISituation();
+        Boat.ChangeBoatAccordingToHealth(_health / 100);
     }
 
     private void HealthUISituation()
     {
         if (HealthUI == null) return;
 
-        HealthUI.fillAmount = _health;
-        HealthUI.color = HealthGradient.Evaluate(_health / 100);
+        float percentage = (float)_health / 100;
+
+        HealthUI.fillAmount = percentage;
+        HealthUI.color = HealthGradient.Evaluate(percentage);
     }
 
     private void Damage(Vector3 hitPosition)

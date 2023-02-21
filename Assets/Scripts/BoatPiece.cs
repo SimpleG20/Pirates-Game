@@ -12,7 +12,6 @@ public class BoatPiece : MonoBehaviour
     private RelativeJoint2D _joint;
     private Animator _animator;
 
-
     private CancellationTokenSource _tokenSource;
 
     private void Awake()
@@ -33,7 +32,6 @@ public class BoatPiece : MonoBehaviour
             }
         }
 
-        print($"{gameObject.name} - {_boatPieces.Count}");
         _tokenSource = new CancellationTokenSource();
     }
 
@@ -70,16 +68,17 @@ public class BoatPiece : MonoBehaviour
     {
         DeatchRelativeJoint();
 
+        foreach (BoatPiece boatPiece in _boatPieces) boatPiece.Impulse();
+
+        if (_rigidbody == null) return;
+
         _rigidbody.AddForce(Random.insideUnitCircle * Random.Range(2f, 4f), ForceMode2D.Impulse);
         _rigidbody.AddTorque(4, ForceMode2D.Impulse);
 
         await Task.Delay(1000);
-        if (_tokenSource.IsCancellationRequested) return;
 
-        foreach(BoatPiece piece in _boatPieces) 
-        {
-            piece.FadeAnimation();
-        }
+        if (_tokenSource.IsCancellationRequested) return;
+        foreach(BoatPiece piece in _boatPieces) piece.FadeAnimation();
 
         FadeAnimation();
     }
