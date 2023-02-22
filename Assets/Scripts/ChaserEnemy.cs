@@ -23,13 +23,10 @@ public class ChaserEnemy : Enemy
         throw new System.NotImplementedException();
     }
 
-    public override async void Die()
+    public override void Die()
     {
+        base.Die();
         Boat.ExplodeAnimation();
-        await Task.Delay(1000);
-
-        if (TokenSource.IsCancellationRequested) return;
-        Destroy(gameObject);
     }
 
     private void OnCollisionEnter2D(Collision2D collision)

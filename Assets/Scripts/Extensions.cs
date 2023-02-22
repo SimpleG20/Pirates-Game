@@ -1,23 +1,27 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+using Random = UnityEngine.Random;
+
 public static class Extensions
 {
-    public static T PickRandom<T>(this T[] array, bool remove = false)
+    public static T PickRandomArray<T>(this T[] array)
     {        
         int randIndex = Random.Range(0, array.Length);
         var obj = array[randIndex];
+        return obj;
+    }
+
+    public static T PickRandomList<T>(this List<T> list, bool remove = false)
+    {
+        int randIndex = Random.Range(0, list.Count);
+        var obj = list[randIndex];
+
         if (remove)
         {
-            var newArray = new T[array.Length-1];
-            for(int i = 0; i < newArray.Length; i++)
-            {
-                if (i == randIndex) newArray[i] = array[i+1];
-                else newArray[i] = array[i];
-            }
-
-            array = newArray;
+            list.Remove(obj);
         }
 
         return obj;

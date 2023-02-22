@@ -67,13 +67,17 @@ public class Player : MonoBehaviour
 
         if (!_ableToShoot) return;
 
-        if (Input.GetKeyDown(KeyCode.F))
+        if (Input.GetKeyDown(KeyCode.Space))
         {
             FrontalShoot();
         }
-        else if (Input.GetKeyDown(KeyCode.L))
+        else if (Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift))
         {
-            LateralShoot();
+            LateralShoot(true);
+        }
+        else if (Input.GetKeyDown(KeyCode.LeftControl) || Input.GetKeyDown(KeyCode.RightControl))
+        {
+            LateralShoot(false);
         }
     }
 
@@ -85,7 +89,7 @@ public class Player : MonoBehaviour
         if (y > 0) transform.Translate(Vector3.up * (-_movementSpeed) * y * Time.deltaTime);
         else if (y == 0) transform.Translate(Random.insideUnitCircle * (0.25f) * Time.deltaTime);
 
-        transform.Rotate(Vector3.forward * (-_rotationSensiblility) * x * Mathf.Abs(y - 0.5f) * Time.deltaTime);
+        transform.Rotate(Vector3.forward * (-_rotationSensiblility) * x * Mathf.Max(y - 0.3f, 0.5f) * Time.deltaTime);
     }
 
     private async void FrontalShoot()
@@ -106,9 +110,11 @@ public class Player : MonoBehaviour
         _ableToShoot = true;
     }
 
-    private async void LateralShoot()
+    private async void LateralShoot(bool right)
     {
-        var canons = new Transform[] { _boat.GetFirstLateralCanon(), _boat.GetSecondLateralCanon(), _boat.GetThirdLateralCanon() };
+        Transform[] canons;
+        if (!right) canons = new Transform[] { _boat.GetFirstLeftCanon(), _boat.GetSecondLeftCanon(), _boat.GetThirdLeftCanon() };
+        else canons = new Transform[] { _boat.GetFirstRightCanon(), _boat.GetSecondRigthCanon(), _boat.GetThirdRigthCanon() };
         int canonsAvailable = 0;
 
         for (int i = 0; i < canons.Length; i++)
@@ -138,18 +144,14 @@ public class Player : MonoBehaviour
         ChangeHealthValue(-(int)(15 * factor));
 
         if (_health < 0) Die();
-        else
-        {
-            Damage(hitPosition);
-            _boat.ChangeBoatAccordingToHealth(_health);
-        }
+        else Damage(hitPosition);
     }
 
     private void ChangeHealthValue(int valueToAdd)
     {
         _health += valueToAdd;
         HealthUISituation();
-        _boat.ChangeBoatAccordingToHealth(_health / 100);
+        _boat.ChangeBoatAccordingToHealth((float)_health / 100);
     }
 
     private void HealthUISituation()
@@ -189,12 +191,11 @@ public class Player : MonoBehaviour
         }
     }
 
-    private async void Die()
+    private void Die()
     {
+        _healthUI.transform.parent.gameObject.SetActive(false);
         _boat.DyingAnimation();
-        await Task.Delay(2250);
-
-        if (_tokenSource.IsCancellationRequested) return;
-        Destroy(gameObject);
     }
+
+    public void DestroyObject() => Destroy(gameObject);
 }

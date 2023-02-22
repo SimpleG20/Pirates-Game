@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
-    private int _whoShoot;
+    private int _whoShot;
     private bool _destroying;
 
     [SerializeField] private float _bulletImpulse;
@@ -15,13 +15,9 @@ public class Bullet : MonoBehaviour
     [SerializeField] private Rigidbody2D _rigidbody;
     [SerializeField] private Animator _animator;
 
-    private CancellationTokenSource _tokenSource;
-
     // Start is called before the first frame update
     private IEnumerator Start()
     {
-        _tokenSource = new CancellationTokenSource();
-
         yield return new WaitForSeconds(_bulletTime);
         if (gameObject != null) FadeBullet();
     }
@@ -30,43 +26,37 @@ public class Bullet : MonoBehaviour
     {
         if (_rigidbody.velocity.magnitude <= 0) return;
 
-        _rigidbody.AddForce(-_rigidbody.velocity.normalized * 0.2f, ForceMode2D.Force);
+        _rigidbody.AddForce(-_rigidbody.velocity.normalized * Random.Range(0.2f, 0.35f), ForceMode2D.Force);
     }
 
     public void Instantited(int layer, Vector3 direction)
     {
-        _whoShoot = layer;
+        _whoShot = layer;
 
-        _rigidbody.AddForce(direction * _bulletImpulse, ForceMode2D.Impulse);
+        _rigidbody.AddForce(direction * Random.Range(_bulletImpulse * 0.9f, _bulletTime * 1.1f), ForceMode2D.Impulse);
         //_rigidbody.velocity = direction * -_bulletSpeed;
         transform.parent = null;
     }
 
-    private async void FadeBullet()
+    private void FadeBullet()
     {
         if (_destroying) return;
 
         _animator.SetTrigger("Fade");
-        await Task.Delay(425);
-
-        if (_tokenSource.IsCancellationRequested) return;
-        Destroy(gameObject);
     }
 
-    private async void DestroyBullet()
+    private void DestroyBullet()
     {
         _rigidbody.velocity = Vector3.zero;
         _destroying = true;
         _animator.SetTrigger("Destroy");
-        await Task.Delay(425);
-
-        if (_tokenSource.IsCancellationRequested) return;
-        Destroy(gameObject);
     }
+
+    public void DestroyObject() => Destroy(gameObject);
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (_whoShoot == collision.gameObject.layer) return;
+        if (_whoShot == collision.gameObject.layer) return;
 
         if (collision.gameObject.CompareTag("Player"))
         {

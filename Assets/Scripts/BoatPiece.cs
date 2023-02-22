@@ -9,7 +9,7 @@ public class BoatPiece : MonoBehaviour
     private List<BoatPiece> _boatPieces;
 
     private Rigidbody2D _rigidbody;
-    private RelativeJoint2D _joint;
+    private FixedJoint2D _joint;
     private Animator _animator;
 
     private CancellationTokenSource _tokenSource;
@@ -17,7 +17,7 @@ public class BoatPiece : MonoBehaviour
     private void Awake()
     {
         _rigidbody = GetComponent<Rigidbody2D>();
-        _joint = GetComponent<RelativeJoint2D>();
+        _joint = GetComponent<FixedJoint2D>();
         _animator = GetComponent<Animator>();
 
         _boatPieces = new List<BoatPiece>();
@@ -39,7 +39,7 @@ public class BoatPiece : MonoBehaviour
     {
         if (_rigidbody.velocity.magnitude <= 0) return;
 
-        _rigidbody.AddForce(-_rigidbody.velocity * 0.3f, ForceMode2D.Force);
+        _rigidbody.AddForce(-_rigidbody.velocity * Random.Range(0.25f, 0.4f), ForceMode2D.Force);
     }
 
     public void FadeAnimation()
@@ -53,7 +53,7 @@ public class BoatPiece : MonoBehaviour
     {
         if (_joint == null) return;
 
-        _joint.connectedBody = null;
+        _joint.enabled = false;
         
         if(_boatPieces.Count != 0)
         {
@@ -72,7 +72,8 @@ public class BoatPiece : MonoBehaviour
 
         if (_rigidbody == null) return;
 
-        _rigidbody.AddForce(Random.insideUnitCircle * Random.Range(2f, 4f), ForceMode2D.Impulse);
+        _rigidbody.bodyType = RigidbodyType2D.Dynamic;
+        _rigidbody.AddForce(Random.insideUnitCircle * Random.Range(1.5f, 4f), ForceMode2D.Impulse);
         _rigidbody.AddTorque(4, ForceMode2D.Impulse);
 
         await Task.Delay(1000);

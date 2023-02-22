@@ -1,6 +1,6 @@
+using Newtonsoft.Json.Linq;
 using System;
-using System.Threading;
-using System.Threading.Tasks;
+using System.Collections.Generic;
 using UnityEngine;
 
 [Serializable]
@@ -9,36 +9,44 @@ public class Boat
     public BoatPiece WoodPrefab;
 
     [Header("Transforms")]
-    [SerializeField] private Transform _frontCanonTransform;
-    [SerializeField] private Transform _lateralCanonTransform1;
-    [SerializeField] private Transform _lateralCanonTransform2;
-    [SerializeField] private Transform _lateralCanonTransform3;
+    [SerializeField] private Transform _frontCanon;
+    [SerializeField] private Transform _firstLeftCanon;
+    [SerializeField] private Transform _secondLeftCanon;
+    [SerializeField] private Transform _thirdLeftCanon;
+    [SerializeField] private Transform _firstRightCanon;
+    [SerializeField] private Transform _secondRightCanon;
+    [SerializeField] private Transform _thirdRightCanon;
 
     [Header("Components")]
     [SerializeField] private Animator _animator;
-    [SerializeField] private BoatPiece[] _bodyPieces;
+    [SerializeField] private List<BoatPiece> _bodyPieces;
 
-    public Transform GetFrontCanon() => _frontCanonTransform;
+    public Transform GetFrontCanon() => _frontCanon;
 
-    public Transform GetFirstLateralCanon() => _lateralCanonTransform1;
+    public Transform GetFirstLeftCanon() => _firstLeftCanon;
 
-    public Transform GetSecondLateralCanon() => _lateralCanonTransform2;
+    public Transform GetSecondLeftCanon() => _secondLeftCanon;
 
-    public Transform GetThirdLateralCanon() => _lateralCanonTransform3;
+    public Transform GetThirdLeftCanon() => _thirdLeftCanon;
+
+    public Transform GetFirstRightCanon() => _firstRightCanon;
+
+    public Transform GetSecondRigthCanon() => _secondRightCanon;
+
+    public Transform GetThirdRigthCanon() => _thirdRightCanon;
 
     public bool RemoveRandomPieceWhenDamaged()
     {
-        if (_bodyPieces.Length == 0) return false;
+        if (_bodyPieces.Count == 0) return false;
 
-        var piece = _bodyPieces.PickRandom(true);
-
-        if (piece == null) return false;
-
+        var piece = _bodyPieces.PickRandomList(true);
         piece.Impulse();
+
+        //_bodyPieces = _bodyPieces.ResizeArray();
         return true;
     }
 
-    public void ChangeBoatAccordingToHealth(int health)
+    public void ChangeBoatAccordingToHealth(float health)
     {
         _animator.SetFloat("Destruction", health);
     }
@@ -47,12 +55,22 @@ public class Boat
     {
         if (_animator == null) return;
 
+        while (_bodyPieces.Count > 0)
+        {
+            RemoveRandomPieceWhenDamaged();
+        }
+
         _animator.SetTrigger("Explode");
     }
 
     public void DyingAnimation()
     {
         if (_animator == null) return;
+
+        while(_bodyPieces.Count > 0)
+        {
+            RemoveRandomPieceWhenDamaged();
+        }
 
         _animator.SetTrigger("Die");
     }

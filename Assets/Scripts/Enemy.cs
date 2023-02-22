@@ -61,7 +61,7 @@ public abstract class Enemy : MonoBehaviour
     {
         _health += valueToAdd;
         HealthUISituation();
-        Boat.ChangeBoatAccordingToHealth(_health / 100);
+        Boat.ChangeBoatAccordingToHealth((float)_health / 100);
     }
 
     private void HealthUISituation()
@@ -100,7 +100,12 @@ public abstract class Enemy : MonoBehaviour
         }
     }
 
-    public abstract void Die();
+    public virtual void Die()
+    {
+        HealthUI.transform.parent.gameObject.SetActive(false);
+    }
+
+    public void DestroyObject() => Destroy(gameObject);
 
     private void OnCollisionEnter2D(Collision2D collision)
     {

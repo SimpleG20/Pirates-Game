@@ -22,10 +22,7 @@ public class ShooterEnemy : Enemy
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyUp(KeyCode.LeftControl))
-        {
-            Shoot();
-        }
+        
     }
 
     public override void Move()
@@ -35,7 +32,7 @@ public class ShooterEnemy : Enemy
 
     public async void Shoot()
     {
-        var canons = new Transform[] { Boat.GetFirstLateralCanon(), Boat.GetSecondLateralCanon(), Boat.GetThirdLateralCanon() };
+        var canons = new Transform[] { Boat.GetFirstLeftCanon(), Boat.GetSecondLeftCanon(), Boat.GetThirdLeftCanon() };
 
         for (int i = 0; i < canons.Length; i++)
         {
@@ -52,12 +49,9 @@ public class ShooterEnemy : Enemy
         _ableToShoot = true;
     }
 
-    public override async void Die()
+    public override void Die()
     {
+        base.Die();
         Boat.DyingAnimation();
-        await Task.Delay(2250);
-
-        if (TokenSource.IsCancellationRequested) return;
-        Destroy(gameObject);
     }
 }
