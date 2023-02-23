@@ -78,7 +78,7 @@ public class MenuManager : MonoBehaviour
     {
         var loader = Instantiate(_loader);
         loader.StartGame();
-        _backgroundAudioSource.volume = 0.1f;
+        _backgroundAudioSource.volume = 0.15f;
     }
 
 

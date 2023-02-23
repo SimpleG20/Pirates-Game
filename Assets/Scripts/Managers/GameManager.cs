@@ -98,8 +98,7 @@ public class GameManager : MonoBehaviour
     {
         PlayerPrefs.SetInt("SCORE", _scoreManager.Score);
 
-        var loader = Instantiate(_loader);
-        loader.Menu();
+        QuitGame();
     }
 
     public void Restart()
@@ -111,12 +110,17 @@ public class GameManager : MonoBehaviour
             Destroy(piece);
         }
 
+        _endScene.SetActive(false);
+
         InitiateGameplay();
     }
 
     public void QuitGame()
     {
-        Events.OnGameEnded();
+        _backgroundAudioSource.volume = 0.15f;
+        Time.timeScale = 1;
+        var loader = Instantiate(_loader);
+        loader.Menu();
     }
 
 }
