@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine;
+using Cysharp.Threading.Tasks;
 
 public class Player : MonoBehaviour
 {
@@ -60,7 +61,6 @@ public class Player : MonoBehaviour
         Events.onGameEnded -= HandleEnd;
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (_end) return;
@@ -106,7 +106,7 @@ public class Player : MonoBehaviour
         Events.onPlayerShoot(_cooldownFrontalShoot);
         _ableToShoot = false;
 
-        await Task.Delay(1000 * _cooldownFrontalShoot);
+        await UniTask.Delay(1000 * _cooldownFrontalShoot, false, PlayerLoopTiming.Update, _tokenSource.Token);
         if (_tokenSource.IsCancellationRequested) return;
 
         _ableToShoot = true;
@@ -133,7 +133,7 @@ public class Player : MonoBehaviour
         if (_ableToShoot) return;
         Events.onPlayerShoot(_cooldownLateralShoot);
 
-        await Task.Delay(1000 * _cooldownLateralShoot);
+        await UniTask.Delay(1000 * _cooldownLateralShoot, false, PlayerLoopTiming.Update, _tokenSource.Token);
         if (_tokenSource.IsCancellationRequested) return;
 
         _ableToShoot = true;
