@@ -98,7 +98,8 @@ public abstract class Enemy : MonoBehaviour
     {
         if (_health < 0) return;
 
-        HadleHealth(-(int)(DamageWhenHit * factor));
+        if (playerShot) HadleHealth(-(int)(DamageWhenHit * factor));
+        else HadleHealth(-(int)(_health * 0.1f));
 
         if (_health > 0)
         {

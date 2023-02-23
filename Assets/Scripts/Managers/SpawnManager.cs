@@ -116,7 +116,11 @@ public class SpawnManager : MonoBehaviour
     private Vector3 SetPositionToSpawn()
     {
         float maxDistance = 0;
-        Vector3 positionToSpawn = _positionsToSpawn.PickRandomList().position;
+        var random = _positionsToSpawn.PickRandomList();
+
+        if (random == null) return new Vector2(-10, 7);
+
+        Vector3 positionToSpawn = random.position;
 
         foreach (Transform t in _positionsToSpawn)
         {

@@ -17,7 +17,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _scoreEndText;
 
     [Header("General")]
-    [SerializeField] private Animator _hintAnimator;
+    [SerializeField] private Toggle _musicToggle;
+    [SerializeField] private AudioSource _backgroundAudioSource;
+    [SerializeField] private Animator _controlsAnimator;
     [SerializeField] private Loader _loader;
 
     private bool _paused;
@@ -46,6 +48,7 @@ public class GameManager : MonoBehaviour
 
     public async void InitiateGameplay()
     {
+        _backgroundAudioSource.Play();
         Transform player = Instantiate(_playerPrefab, Vector3.zero, Quaternion.identity).transform;
         _virtualCamera.LookAt = player;
         _virtualCamera.Follow = player;
@@ -57,9 +60,15 @@ public class GameManager : MonoBehaviour
         Events.OnGameBeginning();
     }
 
+    public void MusicSound()
+    {
+        if (_musicToggle.isOn) _backgroundAudioSource.mute = true;
+        else _backgroundAudioSource.mute = false;
+    }
+
     public void VisualizeHints(Toggle toggle)
     {
-        _hintAnimator.SetBool("Visualize", toggle.isOn);
+        _controlsAnimator.SetBool("Visualize", toggle.isOn);
     }
 
     public void TimeScale(float time)
@@ -67,17 +76,20 @@ public class GameManager : MonoBehaviour
         if (time == 0)
         {
             _paused = true;
+            _backgroundAudioSource.Pause();
         }
         else
         {
             _paused = false;
+            _backgroundAudioSource.UnPause();
         }
         Events.OnPaused(_paused);
         Time.timeScale = time;
     }
 
-    public void HandleEnd()
+    private void HandleEnd()
     {
+        _backgroundAudioSource.Stop();
         _scoreEndText.text = _scoreManager.Score.ToString("0000");
         _endScene.SetActive(true);
     }
@@ -100,6 +112,11 @@ public class GameManager : MonoBehaviour
         }
 
         InitiateGameplay();
+    }
+
+    public void QuitGame()
+    {
+        Events.OnGameEnded();
     }
 
 }

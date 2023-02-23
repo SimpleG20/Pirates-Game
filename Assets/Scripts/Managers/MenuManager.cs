@@ -7,9 +7,12 @@ using TMPro;
 public class MenuManager : MonoBehaviour
 {
     [SerializeField] private Loader _loader;
+    [SerializeField] private AudioSource _backgroundAudioSource;
 
+    [Header("Score")]
     [SerializeField] private TextMeshProUGUI _scoreText;
 
+    [Header("Configurations")]
     [SerializeField] private Animator _configurations;
     [SerializeField] private TMP_InputField _matchTimeInput;
     [SerializeField] private TMP_InputField _spawnRateInput;
@@ -23,7 +26,7 @@ public class MenuManager : MonoBehaviour
     {
         if (PlayerPrefs.GetInt("FIRST_TIME") == 0)
         {
-            _spawnRate = 7f;
+            _spawnRate = 12f;
             _matchTime = 180;
             _score = 0;
 
@@ -41,6 +44,8 @@ public class MenuManager : MonoBehaviour
         _matchTimeInput.placeholder.GetComponent<TextMeshProUGUI>().text = $"{_matchTime}";
         _spawnRateInput.placeholder.GetComponent<TextMeshProUGUI>().text = $"{_spawnRate}";
         _scoreText.text = $"Last Score: {_score.ToString("0000")}";
+
+        _backgroundAudioSource.Play();
     }
 
     public void EnterConfigurations()
@@ -56,7 +61,7 @@ public class MenuManager : MonoBehaviour
     public void ChangeSpawnRate()
     {
         float.TryParse(_spawnRateInput.text, out _spawnRate);
-        if (_spawnRate < 3) { _spawnRate = 3; _spawnRateInput.text = "3"; }
+        if (_spawnRate < 6) { _spawnRate = 6; _spawnRateInput.text = "6"; }
         print(_spawnRate);
         PlayerPrefs.SetFloat("SPAWN", _spawnRate);
     }
@@ -73,6 +78,7 @@ public class MenuManager : MonoBehaviour
     {
         var loader = Instantiate(_loader);
         loader.StartGame();
+        _backgroundAudioSource.volume = 0.1f;
     }
 
 
