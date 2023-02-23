@@ -168,19 +168,7 @@ public class Player : MonoBehaviour
 
     private void Damage(Vector3 hitPosition)
     {
-        bool justWood = Random.Range(0, 3) == 1 && _health > 60;
-
-        if (justWood)
-        {
-            SpreadWood(hitPosition);
-        }
-        else
-        {
-            var pieceRemoved = _boat.PickRandomPieceWhenDamaged();
-
-            if (pieceRemoved == null) SpreadWood(hitPosition);
-            else pieceRemoved.Impulse();
-        }
+        SpreadWood(hitPosition);
     }
 
     private void SpreadWood(Vector3 hitPosition)

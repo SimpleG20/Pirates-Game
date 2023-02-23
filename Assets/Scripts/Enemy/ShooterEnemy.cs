@@ -46,6 +46,7 @@ public class ShooterEnemy : Enemy
 
     private void VerifyPlayerPresence()
     {
+        _boat.GetCanons().RemoveNulls();
         int canonsAvailables = 0;
 
         foreach (Canon canon in _boat.GetCanons())
