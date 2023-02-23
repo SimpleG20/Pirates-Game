@@ -1,10 +1,10 @@
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine.UI;
 using UnityEngine;
 using Cinemachine;
 using TMPro;
+using Cysharp.Threading.Tasks;
 
 public class GameManager : MonoBehaviour
 {
@@ -53,11 +53,11 @@ public class GameManager : MonoBehaviour
         _virtualCamera.LookAt = player;
         _virtualCamera.Follow = player;
 
-        await Task.Delay(1000);
+        await UniTask.Delay(1000, false, PlayerLoopTiming.Update, _tokenSource.Token);
         if (_tokenSource.IsCancellationRequested) return;
 
-        _spawnManager.Initiate();
         Events.OnGameBeginning();
+        _spawnManager.Initiate();
     }
 
     public void MusicSound()

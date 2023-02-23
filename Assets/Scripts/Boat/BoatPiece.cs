@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
@@ -67,9 +68,9 @@ public class BoatPiece : MonoBehaviour
         _rigidbody.AddForce(Random.insideUnitCircle * Random.Range(1.5f, 4f), ForceMode2D.Impulse);
         _rigidbody.AddTorque(4, ForceMode2D.Impulse);
 
-        await Task.Delay(1000);
-
+        await UniTask.Delay(1000, false, PlayerLoopTiming.Update, _tokenSource.Token);
         if (_tokenSource.IsCancellationRequested) return;
+
         foreach(BoatPiece piece in _boatPieces) piece.FadeAnimation();
 
         FadeAnimation();

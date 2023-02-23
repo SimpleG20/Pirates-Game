@@ -15,6 +15,8 @@ public class FollowBoat : MonoBehaviour
     private void Start()
     {
         cam = FindObjectOfType<Camera>();
+
+        _secondOffsetMagnitude = (Screen.width / 1920) * _secondOffsetMagnitude;
     }
 
     // Update is called once per frame

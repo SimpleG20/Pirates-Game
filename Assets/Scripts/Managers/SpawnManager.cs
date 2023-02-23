@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
@@ -75,8 +76,8 @@ public class SpawnManager : MonoBehaviour
             InstantiateEnemy(randomEnemy, positionToSpawn);
         }
 
-        await Task.Delay((int)(1000 * _spawnRate));
-        if (_tokenSource.IsCancellationRequested || _paused || _end) return;
+        await UniTask.Delay((int)(1000 * _spawnRate), false, PlayerLoopTiming.Update, _tokenSource.Token);
+        if (_tokenSource.IsCancellationRequested) return;
 
         SpawnEnemys();
     }

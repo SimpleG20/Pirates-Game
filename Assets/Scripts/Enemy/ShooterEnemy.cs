@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -93,7 +94,7 @@ public class ShooterEnemy : Enemy
 
         int timeToShootAgain = _directionToShoot == 1 ? _cooldownFrontalShoot : _cooldownLateralShoot;
 
-        await Task.Delay(1000 * timeToShootAgain);
+        await UniTask.Delay(1000 * timeToShootAgain, false, PlayerLoopTiming.Update, TokenSource.Token);
         if (TokenSource.IsCancellationRequested) return;
 
         _ableToShoot = true;
